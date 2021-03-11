@@ -3,10 +3,8 @@ sig
 type ('a,'b) token
 type svalue
 val EOF:  'a * 'a -> (svalue,'a) token
-val NAME: (string) *  'a * 'a -> (svalue,'a) token
-val CNIL: (nil) *  'a * 'a -> (svalue,'a) token
-val CBOOL: (bool) *  'a * 'a -> (svalue,'a) token
 val CINT: (int) *  'a * 'a -> (svalue,'a) token
+val NAME: (string) *  'a * 'a -> (svalue,'a) token
 val INT:  'a * 'a -> (svalue,'a) token
 val BOOL:  'a * 'a -> (svalue,'a) token
 val NIL:  'a * 'a -> (svalue,'a) token
