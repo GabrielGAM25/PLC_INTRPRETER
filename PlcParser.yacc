@@ -41,9 +41,17 @@
   | AtomType of plcType
   | Types of plcType list
 
-%left ELSE AND EQUAL DIFF LT LTE PLUS MINUS TIMES DIV LSBR
-%right SEMICOL MARROW DCOL
-%nonassoc IF NOT HD TL ISE PRINT
+%right SEMICOL MARROW
+%nonassoc IF
+%left ELSE
+%left AND
+%left EQUAL DIFF
+%left LT LTE
+%right DCOL
+%left PLUS MINUS
+%left TIMES DIV
+%nonassoc NOT HD TL ISE PRINT
+%left LSBR
 
 %eop EOF
 
@@ -81,7 +89,7 @@ Expr: AtomExpr(AtomExpr)
     | Expr LTE Expr (Prim2("<=", Expr1, Expr2))
     | Expr DCOL Expr (Prim2("::", Expr1, Expr2))
     | Expr SEMICOL Expr (Prim2(";", Expr1, Expr2))
-    | Expr LSBR CINT RSBR (Item (CINT, Expr))
+    | Expr LSBR CINT RSBR (Item(CINT, Expr))
 
 AtomExpr: Const (Const)
     | NAME (Var(NAME))
