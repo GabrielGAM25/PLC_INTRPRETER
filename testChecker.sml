@@ -75,6 +75,12 @@ let
     end handle MatchCondTypesDiff => {};
 
   val _ = let
+      val _ = teval (fromString "match foo with end") [("foo", IntT)];
+    in
+      raise TestsFailed
+    end handle NoMatchResults => {};
+
+  val _ = let
       val _ = teval (fromString "if foo then 0 else 1") [("foo", IntT)];
     in
       raise TestsFailed

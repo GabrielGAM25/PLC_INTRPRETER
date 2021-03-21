@@ -103,39 +103,41 @@ fun teval (ConI _) _ = IntT
         BoolT => if thenType = elseType then thenType else raise DiffBrTypes
       | _ => raise IfCondNotBool
     end
-  | teval (Match(expression1, matchList)) env =
-    let
-      val initialCond = teval expression1 env
-      val firstRes = (#2 (hd matchList))
-      val firstResType = teval firstRes env
-      fun match (Match(expression1, matchList)) env =
-          let in
-            case matchList of
-              head::[] => let in
-                  case head of
-                    (SOME expression2, expression3) => 
-                      if (teval expression3 env) = firstResType then
-                        if initialCond = (teval expression2 env) then 
-                          teval expression3 env 
-                        else raise MatchCondTypesDiff
-                      else raise MatchResTypeDiff
-                  | (NONE, expression3) => if (teval expression3 env) = firstResType then firstResType else raise MatchResTypeDiff
-                end
-            | head::tail => let in
-                case head of
-                  (SOME expression2, expression3) => 
-                    if (teval expression3 env) = firstResType then
-                      if initialCond = (teval expression2 env) then
-                        match (Match(expression1, tail)) env 
-                      else raise MatchCondTypesDiff
-                    else raise MatchResTypeDiff
-                | _ => raise UnknownType
+  | teval (Match(expression1, matchList)) env = let in case matchList of
+        [] => raise NoMatchResults
+      | _ => let
+          val initialCond = teval expression1 env
+          val firstRes = (#2 (hd matchList))
+          val firstResType = teval firstRes env
+          fun match (Match(expression1, matchList)) env =
+              let in
+                case matchList of
+                  head::[] => let in
+                      case head of
+                        (SOME expression2, expression3) => 
+                          if (teval expression3 env) = firstResType then
+                            if initialCond = (teval expression2 env) then 
+                              teval expression3 env 
+                            else raise MatchCondTypesDiff
+                          else raise MatchResTypeDiff
+                      | (NONE, expression3) => if (teval expression3 env) = firstResType then firstResType else raise MatchResTypeDiff
+                    end
+                | head::tail => let in
+                    case head of
+                      (SOME expression2, expression3) => 
+                        if (teval expression3 env) = firstResType then
+                          if initialCond = (teval expression2 env) then
+                            match (Match(expression1, tail)) env 
+                          else raise MatchCondTypesDiff
+                        else raise MatchResTypeDiff
+                    | _ => raise UnknownType
+                  end
+                | _ => raise NoMatchResults
               end
-            | _ => raise NoMatchResults
-          end
-        | match _ _ = raise UnknownType
-    in
-      match (Match(expression1, matchList)) env
+            | match _ _ = raise UnknownType
+        in
+          match (Match(expression1, matchList)) env
+        end
     end
   | teval (Call(expression2, expression1)) env =
     let
